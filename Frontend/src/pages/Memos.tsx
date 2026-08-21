@@ -1,0 +1,86 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Plus, FileText, Paperclip } from 'lucide-react';
+import { useAppSelector } from '../app/hooks';
+import { Card } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
+import EmptyState from '../components/ui/EmptyState';
+import { getUser } from '../mocks/mockData';
+import CreateMemoModal from '../components/memos/CreateMemoModal';
+
+export default function Memos() {
+  const memos = useAppSelector((s) => s.memos.items);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'mine' | 'pending'>('all');
+  const currentUser = useAppSelector((s) => s.auth.user);
+
+  const filtered = memos.filter((m) => {
+    if (filter === 'mine') return m.senderId === currentUser?.id;
+    if (filter === 'pending') return m.status === 'Pending Approval';
+    return true;
+  });
+
+  return (
+    <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div>
+          <h1 className="text-2xl mb-1">Memos & Circulars</h1>
+          <p className="text-sm text-ink-400">Create, track, and manage official memos and routing workflow.</p>
+        </div>
+        <Button icon={<Plus className="size-4" />} onClick={() => setCreateOpen(true)}>Create New Memo</Button>
+      </div>
+
+      <div className="flex gap-2 mb-4">
+        {(['all', 'mine', 'pending'] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
+              filter === f ? 'bg-brand-700 text-white' : 'bg-white border border-ink-200 text-ink-600 hover:bg-ink-50'
+            }`}
+          >
+            {f === 'all' ? 'All Memos' : f === 'mine' ? 'Sent by Me' : 'Pending Approval'}
+          </button>
+        ))}
+      </div>
+
+      <Card>
+        {filtered.length === 0 ? (
+          <EmptyState icon={FileText} title="No memos found" description="Try a different filter or create a new memo." />
+        ) : (
+          <div className="divide-y divide-ink-50">
+            {filtered.map((m) => {
+              const sender = getUser(m.senderId);
+              return (
+                <Link key={m.id} to={`/memos/${m.id}`} className="flex items-start gap-4 px-5 py-4 hover:bg-ink-50/60 transition-colors">
+                  <div className="size-10 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                    <FileText className="size-4.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-ink-800">{m.subject}</p>
+                      <PriorityBadge priority={m.priority} />
+                    </div>
+                    <p className="text-xs text-ink-400 mt-1">
+                      {m.reference} · {m.type} · From {sender?.fullName} · {new Date(m.createdAt).toLocaleDateString()}
+                    </p>
+                    {m.attachments.length > 0 && (
+                      <p className="text-xs text-ink-400 mt-1 flex items-center gap-1"><Paperclip className="size-3" /> {m.attachments.length} attachment(s)</p>
+                    )}
+                  </div>
+                  <div className="shrink-0 flex flex-col items-end gap-1.5">
+                    <StatusBadge status={m.status} />
+                    <span className="text-[11px] text-ink-400">{m.stage}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </Card>
+
+      <CreateMemoModal open={createOpen} onClose={() => setCreateOpen(false)} />
+    </div>
+  );
+}

@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter" layer(base);
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #eef3fb;
+  --color-brand-100: #d7e3f6;
+  --color-brand-200: #b3c9ec;
+  --color-brand-300: #85a8de;
+  --color-brand-400: #5784cd;
+  --color-brand-500: #3865b8;
+  --color-brand-600: #2a4f97;
+  --color-brand-700: #1f3c78;
+  --color-brand-800: #172d5c;
+  --color-brand-900: #0f1e40;
+  --color-brand-950: #0a1530;
+
+  --color-ink-50: #f5f6f8;
+  --color-ink-100: #e8eaee;
+  --color-ink-200: #d1d5dd;
+  --color-ink-300: #aab0bd;
+  --color-ink-400: #7d8598;
+  --color-ink-500: #5c6478;
+  --color-ink-600: #454c5f;
+  --color-ink-700: #333849;
+  --color-ink-800: #232634;
+  --color-ink-900: #161822;
+  --color-ink-950: #0d0e15;
+
+  --color-success-500: #1e9e6f;
+  --color-success-100: #d9f2e8;
+  --color-warning-500: #c9821a;
+  --color-warning-100: #faead0;
+  --color-danger-500: #c4432f;
+  --color-danger-100: #f8ded9;
+  --color-info-500: #2b7fb8;
+  --color-info-100: #d9edf8;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-ink-50 text-ink-800 antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  h1, h2, h3, h4 { @apply font-semibold tracking-tight text-ink-900; }
+  ::selection { @apply bg-brand-200; }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-ink-200 rounded-full; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-in-right { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-slide-up { animation: slide-up 0.25s ease-out; }
+.animate-slide-in-right { animation: slide-in-right 0.25s ease-out; }
