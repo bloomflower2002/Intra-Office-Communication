@@ -6,7 +6,7 @@ import { loginStart, loginSuccess } from '../features/auth/authSlice';
 import { pushToast } from '../features/ui/uiSlice';
 import Button from '../components/ui/Button';
 import type { Role } from '../types';
-
+import logo from '../assets/logo.png';
 const roles: Role[] = ['System Admin', 'Head Office', 'Director', 'Team Leader', 'Employee'];
 
 export default function Login() {
@@ -46,9 +46,9 @@ export default function Login() {
 
       <div className="w-full max-w-md relative animate-slide-up">
         <div className="text-center mb-6">
-          <div className="size-14 mx-auto rounded-2xl bg-white shadow-lg flex items-center justify-center text-brand-800 font-bold text-2xl mb-4">
-            O
-          </div>
+          <div className="size-14 mx-auto rounded-2xl bg-white shadow-lg flex items-center justify-center overflow-hidden mb-4">
+  <img src={logo} alt="OSTA Logo" className="w-full h-full object-cover" />
+</div>
           <h1 className="text-xl font-semibold text-white">Oromia Science & Technology Authority</h1>
           <p className="text-brand-200 text-sm mt-1">Intra-Office Communication Management System</p>
         </div>

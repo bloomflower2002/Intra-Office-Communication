@@ -4,13 +4,13 @@ import { ChevronsLeft, X } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { toggleSidebar, setMobileSidebarOpen } from '../../features/ui/uiSlice';
 import { navItems } from './navConfig';
-
+import logo from '../../assets/logo.png';
 function OstaMark({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="flex items-center gap-2.5 px-1">
-      <div className="size-8 rounded-lg bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center text-white font-bold text-sm shrink-0">
-        O
-      </div>
+     <div className="size-8 rounded-lg overflow-hidden shrink-0 bg-white">
+  <img src={logo} alt="OSTA Logo" className="w-full h-full object-cover" />
+</div>
       {!collapsed && (
         <div className="leading-tight overflow-hidden">
           <p className="text-sm font-semibold text-white whitespace-nowrap">OSTA</p>

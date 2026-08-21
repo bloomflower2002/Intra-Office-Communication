@@ -52,7 +52,7 @@ export default function Header() {
 
       <div className="flex-1 sm:hidden" />
 
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 ml-auto">
         <div className="relative">
           <button
             onClick={() => dispatch(toggleNotificationsPanel())}
