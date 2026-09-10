@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter" layer(base);
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #eef3fb;
+  --color-brand-100: #d7e3f6;
+  --color-brand-200: #b3c9ec;
+  --color-brand-300: #85a8de;
+  --color-brand-400: #5784cd;
+  --color-brand-500: #3865b8;
+  --color-brand-600: #2a4f97;
+  --color-brand-700: #1f3c78;
+  --color-brand-800: #172d5c;
+  --color-brand-900: #0f1e40;
+  --color-brand-950: #0a1530;
+
+  --color-ink-50: #f5f6f8;
+  --color-ink-100: #e8eaee;
+  --color-ink-200: #d1d5dd;
+  --color-ink-300: #aab0bd;
+  --color-ink-400: #7d8598;
+  --color-ink-500: #5c6478;
+  --color-ink-600: #454c5f;
+  --color-ink-700: #333849;
+  --color-ink-800: #232634;
+  --color-ink-900: #161822;
+  --color-ink-950: #0d0e15;
+
+  --color-success-500: #1e9e6f;
+  --color-success-100: #d9f2e8;
+  --color-warning-500: #c9821a;
+  --color-warning-100: #faead0;
+  --color-danger-500: #c4432f;
+  --color-danger-100: #f8ded9;
+  --color-info-500: #2b7fb8;
+  --color-info-100: #d9edf8;
+}
+
+/*
+  Dark theme: Tailwind v4 compiles color utilities (bg-ink-50, text-ink-800, etc.)
+  to `var(--color-ink-50)` etc, so redefining these custom properties inside `.dark`
+  automatically re-themes every component that uses the ink/brand/status scales —
+  no need to hand-edit each component. The ink scale is inverted (50 = darkest
+  surface, 900/950 = lightest text) which mirrors how it's already used semantically
+  (50/100 for surfaces, 700-900 for text, 400-500 for muted text).
+*/
+.dark {
+  --color-ink-50: #12141c;
+  --color-ink-100: #1c1f2b;
+  --color-ink-200: #282c3d;
+  --color-ink-300: #383d54;
+  --color-ink-400: #9aa0b8;
+  --color-ink-500: #aeb4c9;
+  --color-ink-600: #c3c8db;
+  --color-ink-700: #d7dbe9;
+  --color-ink-800: #edeff5;
+  --color-ink-900: #f8f9fc;
+
+  --color-brand-50: #182236;
+  --color-brand-100: #1d2c48;
+
+  --color-success-100: #103826;
+  --color-warning-100: #3a2a0d;
+  --color-danger-100: #3a1712;
+  --color-info-100: #0f2c3d;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body {
+    @apply bg-ink-50 text-ink-800 antialiased transition-colors duration-300;
+    font-feature-settings: "cv11", "ss01";
+  }
+  h1, h2, h3, h4 { @apply font-semibold tracking-tight text-ink-900; }
+  ::selection { @apply bg-brand-200; }
+
+  /* Smooth theme transition across the app, without fighting existing hover/transform transitions */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-ink-200 rounded-full; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-in-right { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-slide-up { animation: slide-up 0.25s ease-out; }
+.animate-slide-in-right { animation: slide-in-right 0.25s ease-out; }

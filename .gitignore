@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+**/node_modules/
+Frontend/node_modules/
+Backend/node_modules/
+vendor/
+**/vendor/
+
+
+# Environment variables
+# NOTE: .env.example is intentionally NOT ignored - it's a template that
+# should be committed so `cp .env.example .env` works for new setups.
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+!.env.example
+!**/.env.example
+
+# Build output
+dist/
+build/
+**/dist/
+**/build/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# Cache
+.cache/
+.parcel-cache/
+.vite/
+
+
+# Uploaded files (real user content, never commit)
+Backend/uploads/*
+!Backend/uploads/.gitkeep
