@@ -133,8 +133,8 @@ File verification status: Verified by Institutional Gateway.
     if (actionModal === 'Approved' || actionModal === 'Endorsed') {
       await dispatch(approveMemo({ memoId: memo.id, comment: comment.trim() || undefined }));
       const msg = isFinalStep
-        ? `Memo ${memo.reference} received final approval & release authorization.`
-        : `Memo ${memo.reference} endorsed and forwarded to the next tier.`;
+        ? `Memo ${memo.reference} received final approval with Official OSTA Authority Stamp affixed.`
+        : `Memo ${memo.reference} endorsed with Official OSTA Stamp and forwarded to the next tier.`;
       dispatch(pushToast(msg, 'success'));
     } else if (actionModal === 'Returned for Revision') {
       await dispatch(returnForRevisionMemo({ memoId: memo.id, comment: comment.trim() || undefined }));
@@ -431,19 +431,22 @@ File verification status: Verified by Institutional Gateway.
           )}
 
           {/* Official Endorsement & Authority Approval Stamp */}
-          {(memo.status === 'Approved' || memo.status === 'Completed' || memo.approvalChain?.some(c => c.action === 'Approved')) && (
-            <div className="mt-8 pt-6 border-t border-ink-100 flex flex-col sm:flex-row items-end justify-between gap-4">
+          {/* Official Endorsement & Authority Approval Stamp */}
+          {(memo.status === 'Approved' || memo.status === 'Completed' || memo.approvalChain?.some(c => c.action === 'Approved' || c.action === 'Endorsed')) && (
+            <div className="mt-8 pt-6 border-t border-ink-100 flex flex-col sm:flex-row items-end justify-between gap-4 print:mt-4 print:pt-4">
               <div className="text-xs text-ink-500 space-y-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold text-xs mb-1">
                   <Check className="size-3.5" />
-                  Officially Approved & Authenticated
+                  {memo.status === 'Approved' || memo.status === 'Completed'
+                    ? 'Officially Approved, Stamped & Released'
+                    : 'Officially Endorsed & Authenticated'}
                 </div>
                 <p className="font-mono text-[11px] text-ink-600">Verification Ref: {memo.reference}-SIG-VERIFIED</p>
-                <p className="text-[10px] text-ink-400">Issued under Authority of Oromia Science & Technology Authority</p>
+                <p className="text-[10px] text-ink-400">Issued under Official Seal of Oromia Science & Technology Authority</p>
               </div>
 
               {/* Official Stamp Block */}
-              <div className="relative p-2.5 flex items-center gap-3.5 bg-brand-50/50 dark:bg-ink-200/30 rounded-2xl border border-brand-200 dark:border-brand-800/60 shadow-sm print:border-brand-700">
+              <div className="relative p-3.5 flex items-center gap-4 bg-gradient-to-br from-brand-50/60 to-emerald-50/50 dark:bg-ink-200/30 rounded-2xl border-2 border-emerald-600/30 dark:border-emerald-500/40 shadow-sm print:border-emerald-700 print:shadow-none">
                 <div className="relative size-24 sm:size-28 shrink-0">
                   <img
                     src="/official-stamp.png"
@@ -452,19 +455,30 @@ File verification status: Verified by Institutional Gateway.
                   />
                 </div>
                 <div className="text-left pr-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand-700 text-white uppercase tracking-wider mb-1">
-                    Official Seal
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-700 text-white uppercase tracking-wider mb-1">
+                    Official OSTA Authority Seal
                   </span>
                   <p className="text-xs font-bold text-brand-900 dark:text-brand-200 leading-tight">
                     OROMIA SCIENCE & TECHNOLOGY AUTHORITY
                   </p>
-                  <p className="text-[10px] font-semibold text-brand-700 dark:text-brand-300 mt-0.5">
-                    EXECUTIVE APPROVAL RELEASE
+                  <p className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">
+                    {memo.status === 'Approved' || memo.status === 'Completed'
+                      ? 'EXECUTIVE FINAL APPROVAL & RELEASE'
+                      : 'DEPARTMENTAL TIER ENDORSEMENT'}
                   </p>
                   <p className="text-[10px] text-ink-500 font-mono mt-1">
-                    Date: {memo.approvalChain?.find(c => c.role === 'Head Office' && c.action === 'Approved')?.timestamp
-                      ? new Date(memo.approvalChain.find(c => c.role === 'Head Office' && c.action === 'Approved')!.timestamp!).toLocaleDateString('en-GB')
-                      : new Date(memo.createdAt).toLocaleDateString('en-GB')}
+                    Stamp Date: {memo.approvalChain?.find(c => (c.action === 'Approved' || c.action === 'Endorsed') && c.timestamp)?.timestamp
+                      ? new Date(memo.approvalChain.find(c => (c.action === 'Approved' || c.action === 'Endorsed') && c.timestamp)!.timestamp!).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                      : new Date(memo.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </p>
+                  <p className="text-[10px] text-ink-700 dark:text-ink-300 font-medium mt-0.5">
+                    Authenticated By: {
+                      memo.approvalChain?.find(c => c.action === 'Approved')?.actedBy ||
+                      users.find(u => u.id === memo.approvalChain?.find(c => c.action === 'Approved')?.userId)?.fullName ||
+                      memo.approvalChain?.find(c => c.action === 'Endorsed')?.actedBy ||
+                      users.find(u => u.id === memo.approvalChain?.find(c => c.action === 'Endorsed')?.userId)?.fullName ||
+                      'Executive Authority'
+                    }
                   </p>
                 </div>
               </div>
@@ -524,17 +538,21 @@ File verification status: Verified by Institutional Gateway.
                       </div>
 
                       <div className="flex items-center gap-1.5 shrink-0">
-                        {c.action === 'Approved' && (
-                          <img
-                            src="/official-stamp.png"
-                            alt="Official Seal"
-                            className="size-7 object-contain shrink-0 drop-shadow-sm"
-                            title="Official Seal Affixed"
-                          />
+                        {(c.action === 'Approved' || c.action === 'Endorsed') && (
+                          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200" title="Official OSTA Seal Affixed">
+                            <img
+                              src="/official-stamp.png"
+                              alt="Official Seal"
+                              className="size-5.5 object-contain shrink-0 drop-shadow-sm"
+                            />
+                            <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-tight">
+                              Stamped
+                            </span>
+                          </div>
                         )}
                         <Badge
                           tone={
-                            c.action === 'Approved' ? 'success' : c.action === 'Rejected' ? 'danger' : 'warning'
+                            c.action === 'Approved' || c.action === 'Endorsed' ? 'success' : c.action === 'Rejected' ? 'danger' : 'warning'
                           }
                         >
                           {c.action ? c.action : 'Pending Review'}
@@ -671,6 +689,38 @@ File verification status: Verified by Institutional Gateway.
             <p className="font-semibold text-brand-900">{memo.reference}</p>
             <p className="text-xs text-brand-700 mt-0.5">{memo.subject}</p>
           </div>
+
+          {/* Official Stamp Affixation Preview */}
+          {(actionModal === 'Approved' || actionModal === 'Endorsed') && (
+            <div className="p-3.5 rounded-xl border-2 border-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/20 flex items-center gap-3.5 shadow-sm">
+              <div className="size-16 sm:size-18 shrink-0 relative p-1 bg-white rounded-xl shadow-sm border border-emerald-200 flex items-center justify-center">
+                <img
+                  src="/official-stamp.png"
+                  alt="Official OSTA Stamp Preview"
+                  className="w-full h-full object-contain transform -rotate-2"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-700 text-white uppercase tracking-wider">
+                    Official Stamp Affixation
+                  </span>
+                  <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">
+                    Will be affixed to memo
+                  </span>
+                </div>
+                <p className="text-xs font-bold text-ink-900 leading-tight">
+                  {currentUser?.fullName || 'Approving Official'}
+                </p>
+                <p className="text-[11px] text-ink-500">
+                  {currentUser?.title || currentUser?.role} · {currentUser?.department || 'OSTA'}
+                </p>
+                <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono mt-0.5">
+                  Seal Verification: {memo.reference}-STAMP-AUTH
+                </p>
+              </div>
+            </div>
+          )}
 
           {actionModal === 'Returned for Revision' && (
             <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ClipboardCheck, Check, X as XIcon, Search, Eye, RotateCcw, Shield, Paperclip, Zap, Clock, ArrowRight } from 'lucide-react';
+import { ClipboardCheck, X as XIcon, Search, Eye, RotateCcw, Shield, Paperclip, Zap, Clock, ArrowRight } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { Card } from '../components/ui/Card';
 import { PriorityBadge } from '../components/ui/Badge';
@@ -77,12 +77,14 @@ export default function Approvals() {
     await dispatch(
       approveMemo({
         memoId: memo.id,
-        comment: isFinalStep ? 'Final Approval granted via Approvals Queue.' : 'Endorsed via Approvals Queue.',
+        comment: isFinalStep ? 'Final Approval granted & Official OSTA Stamp affixed.' : 'Endorsed with Official Stamp to next tier.',
       })
     );
     dispatch(
       pushToast(
-        isFinalStep ? `Memo ${memo.reference} fully approved & released.` : `Memo ${memo.reference} endorsed to next tier.`,
+        isFinalStep
+          ? `Memo ${memo.reference} fully approved with Official OSTA Authority Stamp affixed.`
+          : `Memo ${memo.reference} endorsed with Official Stamp to next tier.`,
         'success'
       )
     );
@@ -92,11 +94,11 @@ export default function Approvals() {
     await dispatch(
       approveMemo({
         memoId: memo.id,
-        comment: 'Executive Fast-Track Authorization & Immediate Institutional Release by Head Office.',
+        comment: 'Executive Fast-Track Authorization & Release by Head Office (Official OSTA Stamp Affixed).',
         fastTrack: true,
       })
     );
-    dispatch(pushToast(`Memo ${memo.reference} fast-track authorized and released!`, 'success'));
+    dispatch(pushToast(`Memo ${memo.reference} fast-track authorized with Official OSTA Stamp affixed!`, 'success'));
   };
 
   const handleQuickReject = async (memoId: string, reference: string) => {
@@ -307,11 +309,11 @@ export default function Approvals() {
                             <>
                               <button
                                 onClick={() => handleQuickEndorse(m)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-colors"
-                                title={isFinalStep ? 'Final Approve & Release' : 'Endorse to Next Tier'}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-colors"
+                                title={isFinalStep ? 'Final Approve & Affix Official OSTA Stamp' : 'Endorse with Official Stamp'}
                               >
-                                <Check className="size-3.5" />
-                                {isFinalStep ? 'Approve' : 'Endorse'}
+                                <img src="/official-stamp.png" alt="Seal" className="size-3.5 object-contain brightness-0 invert drop-shadow-sm" />
+                                {isFinalStep ? 'Approve & Stamp' : 'Endorse & Stamp'}
                               </button>
 
                               <button

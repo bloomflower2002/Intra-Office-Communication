@@ -88,6 +88,12 @@ export default function Memos() {
                   </div>
                   <div className="shrink-0 flex flex-col items-end gap-1.5">
                     <StatusBadge status={m.status} />
+                    {(m.status === 'Approved' || m.status === 'Completed') && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded shadow-2xs">
+                        <img src="/official-stamp.png" alt="Seal" className="size-3 object-contain" />
+                        Official Stamp
+                      </span>
+                    )}
                     <span className="text-[11px] text-ink-400">{t(stageKeys[m.stage])}</span>
                   </div>
                 </Link>
