@@ -83,46 +83,77 @@ export default function CreateMemoModal({ open, onClose }: { open: boolean; onCl
   };
 
   const handleSubmit = async () => {
+    // Auto-resolve recipient if user typed in recipientQuery without clicking suggestion or hitting Enter
+    let resolvedRecipients = [...recipients];
+    if (resolvedRecipients.length === 0 && recipientQuery.trim()) {
+      const q = recipientQuery.trim();
+      const matched = recipientOptions.find((o) => o.label.toLowerCase() === q.toLowerCase());
+      if (matched) {
+        resolvedRecipients.push(matched);
+      } else if (q.includes('@') && q.includes('.')) {
+        resolvedRecipients.push({ id: `email:${q}`, label: q });
+      }
+    }
+
     const e: typeof errors = {};
     if (!subject.trim()) e.subject = 'Subject is required.';
     if (!body.trim()) e.body = 'Memo body cannot be empty.';
-    if (recipients.length === 0) e.recipients = 'Select at least one recipient.';
+    if (resolvedRecipients.length === 0) e.recipients = 'Select at least one recipient.';
     setErrors(e);
     if (Object.keys(e).length > 0 || !currentUser) return;
 
     let chain: { role: Role; userId: string }[] = [];
     if (type === 'Official Memo' || type === 'Directive') {
       const senderDept = currentUser.department || 'ICT Bureau';
-      const tl = users.find((u) => u.role === 'Team Leader' && u.department === senderDept) || users.find((u) => u.role === 'Team Leader') || { id: 'u-tl-rd' };
-      const dir = users.find((u) => u.role === 'Director' && u.department === senderDept) || users.find((u) => u.role === 'Director') || { id: 'u-dir-ict' };
+      const tl = users.find((u) => u.role === 'Team Leader' && (u.department === senderDept || !senderDept)) || users.find((u) => u.role === 'Team Leader') || { id: 'u-tl-rd' };
+      const dir = users.find((u) => u.role === 'Director' && (u.department === senderDept || !senderDept)) || users.find((u) => u.role === 'Director') || { id: 'u-dir-ict' };
       const head = users.find((u) => u.role === 'Head Office') || { id: 'u-head' };
 
       const selectedTL = users.find((u) => u.id === approverId && u.role === 'Team Leader') || tl;
       const selectedDir = users.find((u) => u.id === approverId && u.role === 'Director') || dir;
 
-      chain = [
-        { role: 'Team Leader', userId: selectedTL.id },
-        { role: 'Director', userId: selectedDir.id },
-        { role: 'Head Office', userId: head.id },
-      ];
+      if (currentUser.role === 'Head Office') {
+        // Head Office issues memos directly without lower-tier review
+        chain = [];
+      } else if (currentUser.role === 'Director') {
+        // Directors route directly to Head Office for release
+        chain = [{ role: 'Head Office', userId: head.id }];
+      } else if (currentUser.role === 'Team Leader') {
+        // Team Leaders route to Director and Head Office
+        chain = [
+          { role: 'Director', userId: selectedDir.id },
+          { role: 'Head Office', userId: head.id },
+        ];
+      } else {
+        // Employees and Admins route through full 3-tier hierarchy
+        chain = [
+          { role: 'Team Leader', userId: selectedTL.id },
+          { role: 'Director', userId: selectedDir.id },
+          { role: 'Head Office', userId: head.id },
+        ];
+      }
     }
 
     const result = await dispatch(createMemo({
       type,
       subject: subject.trim(),
       body: body.trim(),
-      recipients: recipients.map((r) => r.id),
+      recipients: resolvedRecipients.map((r) => r.id),
       priority,
       attachments: attachment ? [attachment] : [],
       approvalChain: chain,
     }));
 
     if (createMemo.fulfilled.match(result)) {
-      dispatch(pushToast('Memo created and submitted to Level 1 Team Leader for vetting.', 'success'));
+      const successMsg = chain.length > 0
+        ? `Memo created and submitted to ${chain[0].role} for vetting.`
+        : 'Memo created and published successfully.';
+      dispatch(pushToast(successMsg, 'success'));
       reset();
       onClose();
     } else {
-      dispatch(pushToast('Failed to create memo.', 'error'));
+      const err = (result as any)?.error?.message || (result as any)?.payload || 'Failed to create memo. Please check document contents.';
+      dispatch(pushToast(err, 'error'));
     }
   };
 
@@ -132,13 +163,13 @@ export default function CreateMemoModal({ open, onClose }: { open: boolean; onCl
     <Modal open={open} onClose={() => { reset(); onClose(); }} title={t('create_new_memo')} size="lg"
       footer={<>
         <Button variant="outline" onClick={() => { reset(); onClose(); }}>{t('cancel')}</Button>
-        <Button disabled={isAdmin} onClick={handleSubmit}>{t('submit_for_approval')}</Button>
+        <Button onClick={handleSubmit}>{t('submit_for_approval')}</Button>
       </>}
     >
       <div className="space-y-4">
         {isAdmin && (
-          <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
-            <strong>System Admin Notice:</strong> System Administrators maintain administrative and system-level governance. Institutional memos should be originated by departmental staff, Team Leaders, Directors, or Head Office.
+          <div className="p-3.5 rounded-lg bg-brand-50 border border-brand-200 text-brand-800 text-xs leading-relaxed">
+            <strong>System Admin Originator:</strong> Submitting as Administrator will route this memo through the official departmental hierarchy for sign-off.
           </div>
         )}
 

@@ -113,7 +113,11 @@ const memosSlice = createSlice({
         state.pagination = action.payload?.pagination ?? null;
       })
       .addCase(fetchMemos.rejected, (state) => { state.status = 'failed'; })
-      .addCase(createMemo.fulfilled, (state, action) => { state.items.unshift(action.payload); })
+      .addCase(createMemo.fulfilled, (state, action) => {
+        if (!Array.isArray(state.items)) state.items = [];
+        state.items.unshift(action.payload);
+        if (state.pagination) state.pagination.total += 1;
+      })
       .addCase(approveMemo.fulfilled, (state, action) => replaceMemo(state, action.payload))
       .addCase(rejectMemo.fulfilled, (state, action) => replaceMemo(state, action.payload))
       .addCase(returnForRevisionMemo.fulfilled, (state, action) => replaceMemo(state, action.payload))
