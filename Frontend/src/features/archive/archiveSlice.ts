@@ -37,8 +37,8 @@ const archiveSlice = createSlice({
       .addCase(fetchArchive.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchArchive.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.items = Array.isArray(action.payload) ? action.payload : (action.payload?.data ?? []);
+        state.pagination = action.payload?.pagination ?? null;
       })
       .addCase(fetchArchive.rejected, (state) => { state.status = 'failed'; });
   },

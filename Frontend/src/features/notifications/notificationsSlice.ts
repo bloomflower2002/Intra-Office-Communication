@@ -45,8 +45,8 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotifications.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.items = Array.isArray(action.payload) ? action.payload : (action.payload?.data ?? []);
+        state.pagination = action.payload?.pagination ?? null;
       })
       .addCase(fetchNotifications.rejected, (state) => { state.status = 'failed'; })
       .addCase(markRead.fulfilled, (state, action) => {

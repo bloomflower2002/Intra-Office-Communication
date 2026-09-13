@@ -109,8 +109,8 @@ const memosSlice = createSlice({
       .addCase(fetchMemos.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchMemos.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.items = Array.isArray(action.payload) ? action.payload : (action.payload?.data ?? []);
+        state.pagination = action.payload?.pagination ?? null;
       })
       .addCase(fetchMemos.rejected, (state) => { state.status = 'failed'; })
       .addCase(createMemo.fulfilled, (state, action) => { state.items.unshift(action.payload); })

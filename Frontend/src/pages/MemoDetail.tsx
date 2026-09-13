@@ -429,6 +429,47 @@ File verification status: Verified by Institutional Gateway.
               </div>
             </div>
           )}
+
+          {/* Official Endorsement & Authority Approval Stamp */}
+          {(memo.status === 'Approved' || memo.status === 'Completed' || memo.approvalChain?.some(c => c.action === 'Approved')) && (
+            <div className="mt-8 pt-6 border-t border-ink-100 flex flex-col sm:flex-row items-end justify-between gap-4">
+              <div className="text-xs text-ink-500 space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold text-xs mb-1">
+                  <Check className="size-3.5" />
+                  Officially Approved & Authenticated
+                </div>
+                <p className="font-mono text-[11px] text-ink-600">Verification Ref: {memo.reference}-SIG-VERIFIED</p>
+                <p className="text-[10px] text-ink-400">Issued under Authority of Oromia Science & Technology Authority</p>
+              </div>
+
+              {/* Official Stamp Block */}
+              <div className="relative p-2.5 flex items-center gap-3.5 bg-brand-50/50 dark:bg-ink-200/30 rounded-2xl border border-brand-200 dark:border-brand-800/60 shadow-sm print:border-brand-700">
+                <div className="relative size-24 sm:size-28 shrink-0">
+                  <img
+                    src="/official-stamp.png"
+                    alt="Official OSTA Approval Stamp"
+                    className="w-full h-full object-contain drop-shadow-md transform -rotate-3 hover:rotate-0 transition-transform"
+                  />
+                </div>
+                <div className="text-left pr-2">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand-700 text-white uppercase tracking-wider mb-1">
+                    Official Seal
+                  </span>
+                  <p className="text-xs font-bold text-brand-900 dark:text-brand-200 leading-tight">
+                    OROMIA SCIENCE & TECHNOLOGY AUTHORITY
+                  </p>
+                  <p className="text-[10px] font-semibold text-brand-700 dark:text-brand-300 mt-0.5">
+                    EXECUTIVE APPROVAL RELEASE
+                  </p>
+                  <p className="text-[10px] text-ink-500 font-mono mt-1">
+                    Date: {memo.approvalChain?.find(c => c.role === 'Head Office' && c.action === 'Approved')?.timestamp
+                      ? new Date(memo.approvalChain.find(c => c.role === 'Head Office' && c.action === 'Approved')!.timestamp!).toLocaleDateString('en-GB')
+                      : new Date(memo.createdAt).toLocaleDateString('en-GB')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </CardBody>
       </Card>
 
@@ -482,13 +523,23 @@ File verification status: Verified by Institutional Gateway.
                         </div>
                       </div>
 
-                      <Badge
-                        tone={
-                          c.action === 'Approved' ? 'success' : c.action === 'Rejected' ? 'danger' : 'warning'
-                        }
-                      >
-                        {c.action ? c.action : 'Pending Review'}
-                      </Badge>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {c.action === 'Approved' && (
+                          <img
+                            src="/official-stamp.png"
+                            alt="Official Seal"
+                            className="size-7 object-contain shrink-0 drop-shadow-sm"
+                            title="Official Seal Affixed"
+                          />
+                        )}
+                        <Badge
+                          tone={
+                            c.action === 'Approved' ? 'success' : c.action === 'Rejected' ? 'danger' : 'warning'
+                          }
+                        >
+                          {c.action ? c.action : 'Pending Review'}
+                        </Badge>
+                      </div>
                     </div>
 
                     {c.comment && (

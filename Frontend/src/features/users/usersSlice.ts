@@ -66,8 +66,8 @@ const usersSlice = createSlice({
       .addCase(fetchUsers.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.items = Array.isArray(action.payload) ? action.payload : (action.payload?.data ?? []);
+        state.pagination = action.payload?.pagination ?? null;
       })
       .addCase(fetchUsers.rejected, (state) => { state.status = 'failed'; })
       .addCase(toggleUserStatus.fulfilled, (state, action) => {
