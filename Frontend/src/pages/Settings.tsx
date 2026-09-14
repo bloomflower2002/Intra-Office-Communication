@@ -21,7 +21,7 @@ export default function Settings() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl mb-1">{t('settings')}</h1>
+      <h1 className="text-2xl mb-1">{t('nav_profile')}</h1>
       <p className="text-sm text-ink-400 mb-5">{t('manage_your_profile_security_and_notification_pref')}</p>
 
       <TabGroup>

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { pool, withTransaction } from '../config/db.js';
 
-const DEFAULT_PASSWORD = 'Passw0rd!'; // demo password for all seeded users
+const DEFAULT_PASSWORD = 'Passw0rd!';
 
 const departments = [
   { id: 'dept-admin', name: 'Administration' },

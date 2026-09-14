@@ -24,6 +24,15 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', crede
 app.use(express.json());
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: 'IOCMS Backend API is running',
+    healthCheck: '/api/health',
+    frontend: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  });
+});
+
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
 app.use('/api/auth', authRoutes);

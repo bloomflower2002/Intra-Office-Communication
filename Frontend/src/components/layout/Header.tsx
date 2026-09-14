@@ -107,8 +107,8 @@ export default function Header() {
               </MenuItem>
               <MenuItem>
                 {({ focus }) => (
-                  <NavLink to="/settings" className={`flex items-center gap-2.5 px-3.5 py-2 text-sm text-ink-700 ${focus ? 'bg-ink-50' : ''}`}>
-                    <SettingsIcon className="size-4" /> {t('settings')}
+                  <NavLink to="/system-settings" className={`flex items-center gap-2.5 px-3.5 py-2 text-sm text-ink-700 ${focus ? 'bg-ink-50' : ''}`}>
+                    <SettingsIcon className="size-4" /> {t('nav_system_settings')}
                   </NavLink>
                 )}
               </MenuItem>
