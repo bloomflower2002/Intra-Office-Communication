@@ -8,8 +8,20 @@ import EmptyState from '../ui/EmptyState';
 import Pagination from '../ui/Pagination';
 import { MessageSquare } from 'lucide-react';
 
+import type { User } from '../../types';
 import { useTranslation } from 'react-i18next';
-export default function ChatPanel({ threadId, participantLabel, isChannel }: { threadId: string | null; participantLabel: string; isChannel?: boolean }) {
+
+export default function ChatPanel({
+  threadId,
+  participantLabel,
+  isChannel,
+  participantUser,
+}: {
+  threadId: string | null;
+  participantLabel: string;
+  isChannel?: boolean;
+  participantUser?: User;
+}) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => s.auth.user);
@@ -56,9 +68,30 @@ export default function ChatPanel({ threadId, participantLabel, isChannel }: { t
 
   return (
     <div className="flex flex-col h-full">
-      <div className="h-16 shrink-0 border-b border-ink-100 flex items-center px-5 gap-3">
-        <p className="text-sm font-semibold text-ink-800">{participantLabel}</p>
-        {!isChannel && <span className="flex items-center gap-1 text-xs text-success-500"><Circle className="size-2 fill-current" /> {t('online')}</span>}
+      <div className="h-16 shrink-0 border-b border-ink-100 flex items-center justify-between px-5">
+        <div className="flex items-center gap-3 min-w-0">
+          {participantUser ? (
+            <div
+              className="size-9 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0 shadow-sm"
+              style={{ backgroundColor: participantUser.avatarColor || '#2A4F97' }}
+            >
+              {participantUser.fullName.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+            </div>
+          ) : null}
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink-800 leading-tight truncate">{participantLabel}</p>
+            {participantUser && (
+              <p className="text-xs text-ink-400 leading-tight truncate mt-0.5">
+                {participantUser.title} · {participantUser.department}
+              </p>
+            )}
+          </div>
+        </div>
+        {!isChannel && (
+          <span className="flex items-center gap-1.5 text-xs text-success-600 bg-success-50 dark:bg-success-950/30 px-2.5 py-1 rounded-full font-medium shrink-0">
+            <Circle className="size-2 fill-current" /> {t('online')}
+          </span>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-4 space-y-3">

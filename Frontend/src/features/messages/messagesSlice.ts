@@ -45,12 +45,12 @@ export const fetchChannels = createAsyncThunk<Paginated<Channel>, ListPageParams
   },
 );
 
-/** Get or create a direct thread with another user, returning its id. */
+/** Get or create a direct thread with another user, returning its id and participant. */
 export const openDirectThread = createAsyncThunk(
   'messages/openDirectThread',
   async (participantId: string) => {
     const { data } = await apiClient.post<{ id: string }>('/messages/threads', { participantId });
-    return data.id;
+    return { id: data.id, participantId };
   },
 );
 
@@ -100,6 +100,20 @@ const messagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(openDirectThread.fulfilled, (state, action) => {
+        const { id, participantId } = action.payload;
+        state.activeThreadId = id;
+        const exists = state.directThreads.some((t) => t.id === id);
+        if (!exists) {
+          state.directThreads.unshift({
+            id,
+            participantId,
+            lastMessage: '',
+            lastTimestamp: new Date().toISOString(),
+            unread: 0,
+          });
+        }
+      })
       .addCase(fetchDirectThreads.fulfilled, (state, action) => {
         state.directThreads = action.payload.data;
         state.directThreadsPagination = action.payload.pagination;

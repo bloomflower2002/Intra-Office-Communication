@@ -1,6 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { Bell, Search, LogOut, Settings as SettingsIcon, UserCircle, MenuIcon } from 'lucide-react';
+import { Bell, Search, LogOut, UserCircle, MenuIcon, Sliders } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
@@ -100,15 +100,15 @@ export default function Header() {
               </div>
               <MenuItem>
                 {({ focus }) => (
-                  <NavLink to="/settings" className={`flex items-center gap-2.5 px-3.5 py-2 text-sm text-ink-700 ${focus ? 'bg-ink-50' : ''}`}>
-                    <UserCircle className="size-4" /> {t('my_profile')}
+                  <NavLink to="/profile" className={`flex items-center gap-2.5 px-3.5 py-2 text-sm text-ink-700 ${focus ? 'bg-ink-50' : ''}`}>
+                    <UserCircle className="size-4" /> {t('nav_profile')}
                   </NavLink>
                 )}
               </MenuItem>
               <MenuItem>
                 {({ focus }) => (
                   <NavLink to="/system-settings" className={`flex items-center gap-2.5 px-3.5 py-2 text-sm text-ink-700 ${focus ? 'bg-ink-50' : ''}`}>
-                    <SettingsIcon className="size-4" /> {t('nav_system_settings')}
+                    <Sliders className="size-4" /> {t('nav_system_settings')}
                   </NavLink>
                 )}
               </MenuItem>

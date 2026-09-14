@@ -5,6 +5,7 @@ import AppLayout from './components/layout/AppLayout';
 import Login from './pages/Login';
 import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
+import Messages from './pages/Messages';
 import Channels from './pages/Channels';
 import Memos from './pages/Memos';
 import MemoDetail from './pages/MemoDetail';
@@ -32,8 +33,10 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="/directory" element={<Directory />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Settings />} />
+            <Route path="/settings" element={<Navigate to="/profile" replace />} />
 
             {/* Department Channels: dynamically controlled via Role Management */}
             <Route element={<RequirePermission permission="Broadcast to Department Channels" />}>
