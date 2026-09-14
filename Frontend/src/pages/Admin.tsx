@@ -30,7 +30,9 @@ import { pushToast } from '../features/ui/uiSlice';
 import { roleKeys } from '../i18n/enumLabels';
 import type { Role } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { saveRoleDefs, getSavedRoleDefs } from '../utils/rolePermissions';
+import AuditLog from './AuditLog';
 
 const allRoles: Role[] = ['System Admin', 'Head Office', 'Director', 'Team Leader', 'Employee'];
 const avatarColorOptions = ['#2A4F97', '#1E9E6F', '#C9821A', '#C4432F', '#7B4FA5', '#2B7FB8', '#3865B8', '#0F1E40'];
@@ -1137,19 +1139,46 @@ export function SystemSettings() {
   );
 }
 
+const adminTabKeys = [
+  'tab_user_management',
+  'tab_role_management',
+  'tab_system_settings',
+  'tab_audit_log',
+];
+
+const adminTabRoutes = ['/admin/users', '/admin/roles', '/admin/settings', '/admin/audit'];
+
 export default function Admin() {
   const { t: translate } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getTabIndex = () => {
+    if (location.pathname.includes('/audit')) return 3;
+    if (location.pathname.includes('/settings')) return 2;
+    if (location.pathname.includes('/roles')) return 1;
+    return 0;
+  };
+
+  const selectedIndex = getTabIndex();
+
+  const handleTabChange = (index: number) => {
+    if (adminTabRoutes[index]) {
+      navigate(adminTabRoutes[index]);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-2xl mb-1">{translate('system_administration')}</h1>
       <p className="text-sm text-ink-400 mb-5">{translate('manage_users_roles_and_platform_wide_settings')}</p>
 
-      <TabGroup>
-        <TabList className="flex gap-1.5 mb-5 border-b border-ink-100">
-          {['tab_user_management', 'tab_role_management', 'tab_system_settings'].map((tabKey) => (
+      <TabGroup selectedIndex={selectedIndex} onChange={handleTabChange}>
+        <TabList className="flex gap-1.5 mb-5 border-b border-ink-100 flex-wrap">
+          {adminTabKeys.map((tabKey) => (
             <Tab key={tabKey} className={({ selected }) => clsx(
-              'px-4 py-2.5 text-sm font-medium outline-none border-b-2 -mb-px transition-colors',
-              selected ? 'border-brand-700 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800',
+              'px-4 py-2.5 text-sm font-medium outline-none border-b-2 -mb-px transition-colors cursor-pointer',
+              selected ? 'border-brand-700 text-brand-700 font-semibold' : 'border-transparent text-ink-500 hover:text-ink-800',
             )}>
               {translate(tabKey)}
             </Tab>
@@ -1159,6 +1188,7 @@ export default function Admin() {
           <TabPanel><UserManagement /></TabPanel>
           <TabPanel><RoleManagement /></TabPanel>
           <TabPanel><SystemSettings /></TabPanel>
+          <TabPanel><AuditLog embedded /></TabPanel>
         </TabPanels>
       </TabGroup>
     </div>

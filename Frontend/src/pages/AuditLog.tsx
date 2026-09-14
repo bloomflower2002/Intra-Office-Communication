@@ -49,7 +49,7 @@ const categoryTones: Record<string, 'info' | 'success' | 'brand' | 'warning'> = 
 };
 
 /* ── Component ────────────────────────────────────────────────────── */
-export default function AuditLog() {
+export default function AuditLog({ embedded = false }: { embedded?: boolean } = {}) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState('');
@@ -115,12 +115,12 @@ export default function AuditLog() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h1 className="text-2xl font-semibold">{t('nav_audit_log') || 'Audit Log'}</h1>
-          <p className="text-sm text-ink-400 mt-0.5">
+          {!embedded && <h1 className="text-2xl font-semibold mb-1">{t('nav_audit_log') || 'Audit Log'}</h1>}
+          <p className="text-sm text-ink-400">
             {isAdmin
-              ? 'Institution-wide record of every logged action, across all departments and roles.'
+              ? 'Institution-wide record of every logged action, security event, and administrative decision.'
               : `Record of logged actions for everyone in your department (${currentUser?.department || '—'}), including your own.`}
           </p>
         </div>

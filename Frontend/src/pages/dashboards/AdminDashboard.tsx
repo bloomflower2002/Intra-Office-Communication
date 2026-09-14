@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Users, Activity, HardDrive } from 'lucide-react';
 import KpiCard from '../../components/ui/KpiCard';
@@ -53,7 +54,12 @@ export default function AdminDashboard() {
       </Card>
 
       <Card>
-        <CardHeader><h3 className="text-sm font-semibold">{t('recent_user_activity_audit_log')}</h3></CardHeader>
+        <CardHeader className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">{t('recent_user_activity_audit_log')}</h3>
+          <Link to="/admin/audit" className="text-xs text-brand-700 hover:text-brand-900 font-medium hover:underline">
+            View Full Audit Log →
+          </Link>
+        </CardHeader>
         {auditStatus !== 'loading' && auditLog.length === 0 ? (
           <EmptyState icon={ClipboardList} title={t('no_activity_yet')} description={t('audit_log_empty_description')} />
         ) : (

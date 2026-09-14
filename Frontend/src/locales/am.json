@@ -203,6 +203,7 @@
   "tab_user_management": "የተጠቃሚ አስተዳደር",
   "tab_role_management": "የሚና አስተዳደር",
   "tab_system_settings": "የስርዓት ቅንብሮች",
+  "tab_audit_log": "የኦዲት መዝገብ",
   "account_active": "ንቁ",
   "account_inactive": "ንቁ ያልሆነ",
   "disable_account": "መለያ አሰናክል",

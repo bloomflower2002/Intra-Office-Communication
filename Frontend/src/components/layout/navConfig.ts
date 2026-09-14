@@ -21,11 +21,8 @@ export const navItems: NavItem[] = [
   { label: 'Archive', to: '/archive', icon: Archive, requiredPermission: 'Access Digital Archive & Compliance Audit' },
   { label: 'Reports', to: '/reports', icon: BarChart3, requiredPermission: 'View System & Department Reports' },
   { label: 'Admin', to: '/admin/users', icon: Shield, requiredPermission: 'Manage Institutional Users & Status' },
+  { label: 'Audit Log', to: '/admin/audit', icon: ClipboardList, requiredPermission: 'Manage Institutional Users & Status' },
   { label: 'System Settings', to: '/system-settings', icon: Sliders, requiredPermission: 'Configure System Policies & Branding' },
-  // No requiredPermission: every role gets an Audit Log entry in their sidebar.
-  // What they can actually see there is scoped server-side (System Admin = everyone,
-  // everyone else = only their own department) — see auditController.js.
-  { label: 'Audit Log', to: '/audit-log', icon: ClipboardList },
   { label: 'Directory', to: '/directory', icon: Users },
   { label: 'Profile', to: '/settings', icon: Settings },
 ];

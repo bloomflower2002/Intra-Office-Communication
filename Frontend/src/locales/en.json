@@ -203,6 +203,7 @@
   "tab_user_management": "User Management",
   "tab_role_management": "Role Management",
   "tab_system_settings": "System Settings",
+  "tab_audit_log": "Audit Log",
   "account_active": "Active",
   "account_inactive": "Inactive",
   "disable_account": "Disable account",

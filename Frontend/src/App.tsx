@@ -15,7 +15,6 @@ import Admin from './pages/Admin';
 import Directory from './pages/Directory';
 import Settings from './pages/Settings';
 import SystemSettingsPage from './pages/SystemSettings';
-import AuditLog from './pages/AuditLog';
 
 import Intro from './pages/Intro';
 
@@ -62,15 +61,14 @@ export default function App() {
               <Route path="/reports" element={<Reports />} />
             </Route>
 
-            {/* Admin Governance: dynamically controlled via Role Management */}
+            {/* Admin Governance & Audit: restricted to Administration only */}
             <Route element={<RequirePermission permission="Manage Institutional Users & Status" />}>
               <Route path="/admin/users" element={<Admin />} />
+              <Route path="/admin/roles" element={<Admin />} />
+              <Route path="/admin/settings" element={<Admin />} />
+              <Route path="/admin/audit" element={<Admin />} />
+              <Route path="/audit-log" element={<Navigate to="/admin/audit" replace />} />
             </Route>
-
-            {/* Audit Log: open to every authenticated role. Visibility scope
-                (System Admin sees everyone, other roles see only their own
-                department) is enforced server-side, not via a route guard. */}
-            <Route path="/audit-log" element={<AuditLog />} />
 
             {/* System Settings: dynamically controlled via Role Management */}
             <Route element={<RequirePermission permission="Configure System Policies & Branding" />}>
